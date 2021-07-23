@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   spark:
-    build: ./spark_build
+    image: docker.io/bitnami/spark:2.4.6
     environment:
       - SPARK_MODE=master
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
@@ -16,7 +16,7 @@ services:
       - ./jars_dir:/opt/bitnami/spark/ivy:z
       - ./spark_data/conf:/opt/bitnami/spark/conf
   spark-worker-1:
-    build: ./spark_build
+    image: docker.io/bitnami/spark:2.4.6
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077
@@ -30,7 +30,7 @@ services:
       - ./jars_dir:/opt/bitnami/spark/ivy:z
       - ./spark_data/conf:/opt/bitnami/spark/conf
   spark-worker-2:
-    build: ./spark_build
+    image: docker.io/bitnami/spark:2.4.6
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077
