@@ -12,9 +12,11 @@ services:
     ports:
       - '8080:8080'
       - '7077:7077'
+    command: spark-submit /opt/bitnami/spark/app/join_sensor2kafka.py && spark-submit /opt/bitnami/spark/app/kafka2cassandra.py
     volumes:
       - ./jars_dir:/opt/bitnami/spark/ivy:z
       - ./spark_data/conf:/opt/bitnami/spark/conf
+      - ./spark_data/app:/opt/bitnami/spark/app
   spark-worker-1:
     image: docker.io/bitnami/spark:2.4.6
     environment:
@@ -43,6 +45,25 @@ services:
     volumes:
       - ./jars_dir:/opt/bitnami/spark/ivy:z
       - ./spark_data/conf:/opt/bitnami/spark/conf
+  cassandra-node1:
+    image: docker.io/bitnami/cassandra:3
+    ports:
+      - '7000:7000'
+      - '9042:9042'
+    environment:
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_PASSWORD=cassandra
+  cassandra-node2:
+    image: docker.io/bitnami/cassandra:3
+    # ports:
+    #   - '7000:7000'
+    #   - '9042:9042'
+    environment:
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2
+      - CASSANDRA_PASSWORD=cassandra
   fluentd_forward:
     image: docker.io/bitnami/fluentd:1
     ports:
