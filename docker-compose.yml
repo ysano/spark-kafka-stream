@@ -12,7 +12,7 @@ services:
     ports:
       - '8080:8080'
       - '7077:7077'
-    command: spark-submit /opt/bitnami/spark/app/join_sensor2kafka.py && spark-submit /opt/bitnami/spark/app/kafka2cassandra.py
+    command: /opt/bitnami/spark/app/startup.sh
     volumes:
       - ./jars_dir:/opt/bitnami/spark/ivy:z
       - ./spark_data/conf:/opt/bitnami/spark/conf
