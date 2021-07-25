@@ -1,0 +1,64 @@
+#+OPTIONS: H:3 num:t toc:t ^:nil tex:t
+#+TITLE: spark-kafka-stream
+* About
+
+** 概要
+
+   - センサーデータ
+     - 緯度経度(lon,lat),温度、湿度、酸性度、水分
+   - ストリーム処理
+     - 異常値検出
+     - データ蓄積
+   - Jupyter Lab でデータ分析
+     - spark に接続
+   - 特徴
+     - 遠隔地のセンサ処理を仮定
+     - 分散処理に適した構成
+
+** 技術要素
+
+   - ログ収集: [[https://www.fluentd.org/][Fluentd]]
+   - 分散ストリーミング: [[https://kafka.apache.org/][Apache Kafka]]
+   - 統合分析エンジン: [[https://spark.apache.org/][Apache Spark]]
+   - 分散 NoSQL DB: [[https://cassandra.apache.org/][Apache Cassandra]]
+   - データ分析・開発環境: [[https://jupyter.org/][Jupyter Lab]]
+   - 構成: [[https://www.docker.com/][Docker]]
+     
+* 構成図
+
+  - TODO
+  
+* 手順
+
+** 疑似センサーデータ生成スクリプトを常時走らせる
+   #+begin_quote
+     * * * * * /path/to/sensor_data/execute_create_sensor_data.sh >> /path/to/sensor_data/sensor_data.log
+   #+end_quote
+   - wsl2 の場合は cron は働かないので、起動すること
+   #+begin_sec shell
+     service cron start
+   #+end_src
+     
+** サーバ群起動
+   #+begin_src shell
+   docker-compose up -d
+   #+end_src
+
+* Jupyter Lab + Spark
+
+  - アドホックデータ分析でインサイトを得る
+  - sparkContext
+
+* TODO 機械学習処理
+  - spark.ml 利用したバッチ分析
+  - 前処理
+    - 特徴量の数を決める(PCA)
+  - 学習
+    - 特徴量抽出～モデル～パラメタ推定～特徴量選択～モデル評価と選択
+    - 特徴量の組み合わせでモデル作成し精度をみる
+    - AUC/RMSE
+  - 予測
+* やりたいこと
+** TODO k8s に展開
+** TODO Arduino などで実センサ接続
+

@@ -95,3 +95,18 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
+  pyspark-notebook:
+    image: jupyter/pyspark-notebook:spark-2
+    ports:
+      - '8888:8888'
+      - '4040:4040'
+      - '4041:4041'
+      - '4042:4042'
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - GRANT_SUDO=yes
+    volumes:
+      - ..:/opt/spark-book
+      - ./notebook_data/work:/home/jovyan/work
+      - ./notebook_data/startup:/home/jovyan/.ipython/profile_default/startup
+      - ./notebook_data/conf:/usr/local/spark/conf
