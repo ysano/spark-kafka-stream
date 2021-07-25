@@ -49,7 +49,7 @@
   - アドホックデータ分析でインサイトを得る
   - sparkContext
 
-* TODO 機械学習処理
+* 機械学習処理(TODO)
   - spark.ml 利用したバッチ分析
   - 前処理
     - 特徴量の数を決める(PCA)
@@ -59,6 +59,6 @@
     - AUC/RMSE
   - 予測
 * やりたいこと
-** TODO k8s に展開
+** TODO kubernetes に展開
 ** TODO Arduino などで実センサ接続
 
