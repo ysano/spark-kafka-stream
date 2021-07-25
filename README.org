@@ -79,6 +79,8 @@
     #+RESULTS:
     [[file:fig0.png]]
 
+#+ATTR_HTML: :width 640;
+[[./fig0.png][file:./fig0.png]]
   
 * 手順
 
