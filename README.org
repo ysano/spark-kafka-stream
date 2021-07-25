@@ -26,7 +26,59 @@
      
 * 構成図
 
-  - TODO
+    #+begin_src plantuml :file fig0.png :cmdline -charset UTF-8
+      !include <logos/jupyter.puml>
+      !include <logos/kafka.puml>
+      !include <logos/spark.puml>
+      !include <logos/cassandra.puml>
+      
+      title 構成図
+      
+      skinparam monochrome true
+      
+      queue "<$kafka>\n sendor-data" as kafka1
+      queue "<$kafka>\n joined-sendor-data" as kafka2
+      queue "<$kafka>\n whc-less-sendor-data" as kafka3
+      
+      node "Master" {
+      database "<$cassandra>" as cassandra1
+      rectangle "☆\n Spark" as spark1
+      }
+      node "Worker1" {
+      database "<$cassandra>" as cassandra2
+      rectangle "☆\n Spark" as spark2
+      }
+      node "Worker2" {
+      database "<$cassandra>" as cassandra3
+      rectangle "☆\n Spark" as spark3
+      }
+      
+      rectangle "<$jupyter>\n 分析" as jupyter
+      
+      fluentd -> kafka1 : 温度・湿度
+      kafka1 -> spark1
+      spark1 --> kafka2 : "Sensor 位置情報 Join"
+      kafka2 --> kafka3 : "Window 処理"
+      kafka3 -> alert : "Windows\n 平均水量不足"
+      spark1 <-> cassandra1
+      spark2 <-> cassandra2
+      spark3 <-> cassandra3
+      
+      cassandra1 <-> cassandra2
+      cassandra2 <--> cassandra3
+      cassandra3 <--> cassandra1
+      spark1 <-> spark2
+      spark2 <--> spark3
+      spark3 <--> spark1
+      
+      spark1 <-- jupyter
+      
+      
+    #+end_src
+
+    #+RESULTS:
+    [[file:fig0.png]]
+
   
 * 手順
 
@@ -58,7 +110,7 @@
     - 特徴量の組み合わせでモデル作成し精度をみる
     - AUC/RMSE
   - 予測
-* やりたいこと
+* 改善の余地
 ** TODO kubernetes に展開
 ** TODO Arduino などで実センサ接続
-
+** TODO Cassandra Only DC をつくり、分析環境からオペレーショナル環境を分離する

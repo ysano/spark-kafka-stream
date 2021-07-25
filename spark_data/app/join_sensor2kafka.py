@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # 8. センサ配置マスタの初めの行をヘッダとして扱い、CSVをスキーマを指定してDataFrameとして読込
     sensorMasterDataFrame = spark.read.format(
         "com.databricks.spark.csv").schema(masterSchema).option(
-            "header", "true").load("/opt/spark-book/chap05/sensor_field.csv")
+            "header", "true").load("/opt/bitnami/spark/sensor_field.csv")
 
     # 9. "sensor_id"カラムでセンサデータとセンサ配置マスタをLeft outer join
     joinedDataFrame = columnRenamedDataFrame.join(sensorMasterDataFrame,
