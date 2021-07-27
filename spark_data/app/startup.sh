@@ -1,9 +1,34 @@
 #!/bin/bash
-sh -c '/opt/bitnami/scripts/spark/run.sh > /opt/bitnami/spark/logs/run.log' &
-sleep 10
-sh -c 'spark-submit /opt/bitnami/spark/app/join_sensor2kafka.py > /opt/bitnami/spark/logs/join_sensor2kafka.log'
-sleep 20
-sh -c 'spark-submit /opt/bitnami/spark/app/kafka2cassandra.py > /opt/bitnami/spark/logs/kafka2cassandra.log'
-sleep 20
-sh -c 'spark-submit /opt/bitnami/spark/app/window_average.py > /opt/bitnami/spark/logs/window_average.log'
+set -o errexit
+set -o nounset
+set -o pipefail
+# set -o xtrace
 
+# Load libraries
+. /opt/bitnami/scripts/libspark.sh
+. /opt/bitnami/scripts/libos.sh
+
+# default cmd
+# sh -c /opt/bitnami/scripts/spark/run.sh &
+# exit
+# sleep 60
+
+# Load Spark environment variables
+eval "$(spark_env)"
+
+EXEC=$(command -v spark-submit)
+apps=(
+    "joined-sensor-data.py"
+    "kafka2cassandra.py"
+    "window_average.py"
+)
+for APP in "${apps[@]}" ; do
+    info "** spark-submit $APP **"
+    ARGS="/opt/bitnami/spark/app/$APP </dev/null >/opt/bitnami/spark/logs/${APP##*/}.log 2>&1 &"
+    if am_i_root; then
+        sh -c "gosu nohup $EXEC ${ARGS[*]}"
+    else
+        sh -c "nohup $EXEC ${ARGS[*]}"
+    fi
+    sleep 20
+done

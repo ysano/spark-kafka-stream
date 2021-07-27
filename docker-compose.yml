@@ -13,11 +13,17 @@ services:
       - '8080:8080'
     expose:
       - '7077'
-    command: /opt/bitnami/spark/app/startup.sh
+    # command: /opt/bitnami/spark/app/startup.sh
     volumes:
+      - ..:/opt/spark-book
+      # fix image bug
       - ./jars_dir:/opt/bitnami/spark/ivy:z
+      # dependency jars dir
+      - ./jars_dir:/opt/bitnami/spark/jars/ivy:z
       - ./spark_data/node-1-conf:/opt/bitnami/spark/conf
       - ./spark_data/app:/opt/bitnami/spark/app
+    depends_on:
+      - cassandra-node1
   spark-worker-1:
     image: docker.io/bitnami/spark:2.4.6
     environment:
@@ -31,6 +37,7 @@ services:
       - SPARK_SSL_ENABLED=no
     volumes:
       - ./jars_dir:/opt/bitnami/spark/ivy:z
+      - ./jars_dir:/opt/bitnami/spark/jars/ivy:z
       - ./spark_data/node-2-conf:/opt/bitnami/spark/conf
   spark-worker-2:
     image: docker.io/bitnami/spark:2.4.6
@@ -45,6 +52,7 @@ services:
       - SPARK_SSL_ENABLED=no
     volumes:
       - ./jars_dir:/opt/bitnami/spark/ivy:z
+      - ./jars_dir:/opt/bitnami/spark/jars/ivy:z
       - ./spark_data/node-3-conf:/opt/bitnami/spark/conf
   cassandra-node1:
     image: docker.io/bitnami/cassandra:3
@@ -56,6 +64,8 @@ services:
       - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2,cassandra-node3
       - CASSANDRA_PASSWORD_SEEDER=yes
       - CASSANDRA_PASSWORD=cassandra
+    volumes:
+      - ./schema:/docker-entrypoint-initdb.d
   cassandra-node2:
     image: docker.io/bitnami/cassandra:3
     expose:
